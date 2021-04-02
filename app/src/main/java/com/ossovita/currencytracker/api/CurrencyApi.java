@@ -10,9 +10,8 @@ import retrofit2.http.Query;
 
 public interface CurrencyApi  {
     @GET("latest")
-    Call<List<CurrencyModel>> getCurrencies(
+    Call<CurrencyModel> getCurrencies(
             @Query("access_key") String key);
-
 
 
 }
