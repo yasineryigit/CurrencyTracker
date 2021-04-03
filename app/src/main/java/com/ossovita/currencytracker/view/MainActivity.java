@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     private CurrencyAdapter adapter;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,7 +43,17 @@ public class MainActivity extends AppCompatActivity {
         currencyApi = CurrencyService.getInstance().create(CurrencyApi.class);
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        getData();
+
+        new Thread(() -> {//it works in background, update itself
+            while (true) {
+                getData();
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
 
     }
 
@@ -50,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
         currencyApi.getCurrencies("3fd4971c7c6eb859eaae3ee81cb44d59").enqueue(new Callback<CurrencyModel>() {
             @Override
             public void onResponse(Call<CurrencyModel> call, Response<CurrencyModel> response) {
+               trackedCurrencyList.clear();
                 if (!response.isSuccessful()) {
                     Log.d(TAG, "onResponse: hata: " + response.code());
                 }
