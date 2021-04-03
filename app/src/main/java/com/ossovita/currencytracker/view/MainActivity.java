@@ -1,11 +1,15 @@
-package com.ossovita.currencytracker;
+package com.ossovita.currencytracker.view;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.text.method.HideReturnsTransformationMethod;
 import android.util.Log;
 
+import com.ossovita.currencytracker.R;
+import com.ossovita.currencytracker.adapter.CurrencyAdapter;
 import com.ossovita.currencytracker.api.CurrencyApi;
 import com.ossovita.currencytracker.api.CurrencyService;
 import com.ossovita.currencytracker.model.CurrencyModel;
@@ -27,13 +31,17 @@ public class MainActivity extends AppCompatActivity {
     Double EURUSD,EURGBP,EURJPY;
     Double XEURUSD,XEURGBP,XEURJPY;
     Double USDTRY,EURTRY,GBPTRY,JPYTRY;
+    private RecyclerView recyclerView;
+    private CurrencyAdapter adapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         currencyApi = CurrencyService.getInstance().create(CurrencyApi.class);
-
+        recyclerView = findViewById(R.id.recyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
         getData();
 
     }
@@ -65,13 +73,15 @@ public class MainActivity extends AppCompatActivity {
                 trackedCurrencyList.add(new TrackedCurrency("EURTRY",EURTRY));
                 trackedCurrencyList.add(new TrackedCurrency("GBPTRY",GBPTRY));
                 trackedCurrencyList.add(new TrackedCurrency("JPYTRY",JPYTRY));
-
+                //for testing
                 for(TrackedCurrency trackedCurrency : trackedCurrencyList){
                     Log.d(TAG, "onResponse: name " + trackedCurrency.getName() +
-                            " Price: " + trackedCurrency.getPrice()
-                            );
+                            " Price: " + trackedCurrency.getPrice());
                 }
 
+                adapter=new CurrencyAdapter(trackedCurrencyList);
+                recyclerView.setAdapter(adapter);
+                adapter.notifyDataSetChanged();
             }
 
             @Override
@@ -80,6 +90,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private double calculate (String currency1, String currency2) {
+        String parityString = currency1+currency2;
+
+        Double parity = 1/currencyModel.getRates().getUsd()*currencyModel.getRates().getTry();
+
+        return 0;
     }
 
 }
